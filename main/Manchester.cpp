@@ -45,6 +45,7 @@ static uint8_t* rx_data = rx_default_data;
 Manchester::Manchester() //constructor
 {
   applyWorkAround1Mhz = 0;
+  reverseManchester = false;
 }
 
 
@@ -124,13 +125,13 @@ PR represents parity in the nibble. PC represents parity of the bits in the colu
 or customer ID.	        D04	D05	D06	D07	 PR1
                         D08	D09	D10	D11	 PR2 	Each group of 4 bits
                         D12	D13	D14	D15	 PR3 	is followed by an Even
-32 Data Bits	          D16	D17	D18	D19	 PR4 	parity bit
+32 Data Bits	        D16	D17	D18	D19	 PR4 	parity bit
                         D20	D21	D22	D23	 PR5
                         D24	D25	D26	D27	 PR6
                         D28	D29	D30	D31	 PR7
                         D32	D33	D34	D35	 PR8
                         D36	D37	D38	D39	 PR9
-4 column Parity bits	  PC0	PC1	PC2	PC3	 S0
+4 column Parity bits	PC0	PC1	PC2	PC3	 S0
 */
 void Manchester::transmitEM4100(uint8_t *data)
 {
@@ -153,7 +154,6 @@ void Manchester::transmitEM4100(uint8_t *data)
 
     //for (uint8_t j = 0; j < ; j++)
     {
-
       uint8_t numHighBits = 0;
       if ((d & 0x80) == 0)
         sendZero();
@@ -217,7 +217,6 @@ void Manchester::transmitEM4100(uint8_t *data)
       sendEvenParity(numHighBits);
 //Serial.println("");      
     }//end of byte
-
   }//end of data
   //Serial.println("PARITY");    
     //Parity Nibble
@@ -252,24 +251,40 @@ void Manchester::sendEvenParity(int numHighBits){
 
 void Manchester::sendZero(void)
 {
-  //Serial.print('0');
-  delayMicroseconds(delay1);
-  digitalWrite(TxPin, HIGH);
-
-  delayMicroseconds(delay2);
-  digitalWrite(TxPin, LOW);
+    //Serial.print('0');
+	if (reverseManchester)
+		sendLowHigh();
+	else
+		sendHighLow();
 }//end of send a zero
 
 
 void Manchester::sendOne(void)
 {
-  //Serial.print('1');
-  delayMicroseconds(delay1);
-  digitalWrite(TxPin, LOW);
+	//Serial.print('1');
+	if (reverseManchester)
+		sendHighLow();
+	else
+		sendLowHigh();
+}
 
-  delayMicroseconds(delay2);
-  digitalWrite(TxPin, HIGH);
-}//end of send one
+void Manchester::sendLowHigh() 
+{
+	delayMicroseconds(delay1);
+	digitalWrite(TxPin, LOW);
+
+	delayMicroseconds(delay2);
+	digitalWrite(TxPin, HIGH);
+}
+
+void Manchester::sendHighLow()
+{
+	delayMicroseconds(delay1);
+	digitalWrite(TxPin, HIGH);
+
+	delayMicroseconds(delay2);
+	digitalWrite(TxPin, LOW);
+}
 
 //TODO use repairing codes perhabs?
 //http://en.wikipedia.org/wiki/Hamming_code

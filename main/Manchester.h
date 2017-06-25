@@ -145,10 +145,12 @@ class Manchester
     void sendZero(void);
     void sendOne(void);
   private:
-
     uint8_t TxPin;
     uint8_t applyWorkAround1Mhz;
+	bool reverseManchester;
     void sendEvenParity(int numHighBits);
+	void sendLowHigh();
+	void sendHighLow();
 };//end of class Manchester
 
 // Cant really do this as a real C++ class, since we need to have
