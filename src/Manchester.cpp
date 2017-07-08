@@ -52,6 +52,13 @@ void Manchester::setupTransmit(uint8_t pin, uint8_t SF)
 #endif
 }
 
+void Manchester::SetDelay_us(uint16_t delay_us)
+{
+  delay1 = delay_us;
+  delay2 = delay1;
+}
+
+
 /*
 Send data in the EM4100 Protocol
 

@@ -41,9 +41,7 @@ class Manchester
     void setupTransmit(uint8_t pin, uint8_t SF = MAN_1200); //set up transmission
 
     void transmitEM4100(uint8_t *data); // transmit array of bytes
-
-    uint8_t decodeMessage(uint16_t m, uint8_t &id, uint8_t &data); //decode 8 bit payload and 4 bit ID from the message, return 1 of checksum is correct, otherwise 0
-    uint16_t encodeMessage(uint8_t id, uint8_t data); //encode 8 bit payload, 4 bit ID and 4 bit checksum into 16 bit
+    void SetDelay_us(uint16_t delay_us);
 
     //wrappers for global functions
   private:
